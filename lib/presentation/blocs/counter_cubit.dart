@@ -20,6 +20,9 @@ class CounterCubit extends Cubit<CounterState> {
   }
 }
 
+///-----------------------------------
+/// The state of the counter
+///-----------------------------------
 class CounterState extends Equatable {
   final int counter;
   final int transactionCount;
