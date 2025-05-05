@@ -39,88 +39,47 @@ class _RegisterView extends StatelessWidget {
   }
 }
 
-class _RegisterForm extends StatefulWidget {
+class _RegisterForm extends StatelessWidget {
   const _RegisterForm();
-
-  @override
-  State<_RegisterForm> createState() => _RegisterFormState();
-}
-
-class _RegisterFormState extends State<_RegisterForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String username = '';
-  String email = '';
-  String password = '';
-
-  bool isNullOrEmpty(String? value) {
-    return value == null || value.isEmpty || value.trim().isEmpty;
-  }
-
-  bool isEmailValid(String? value) {
-    if (isNullOrEmpty(value)) return false;
-    return RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value!);
-  }
 
   @override
   Widget build(BuildContext context) {
     final RegisterCubit registerCubit = context.watch<RegisterCubit>();
+    final username = registerCubit.state.username;
+    final email = registerCubit.state.email;
+    final password = registerCubit.state.password;
+
     return Form(
-      key: _formKey,
       child: Column(
         children: [
+          // Username
           CustomTextFormField(
             label: 'Username',
-            onChanged: (value) {
-              registerCubit.updateUsername(value);
-              _formKey.currentState?.validate();
-            },
-            validator: (value) {
-              if (isNullOrEmpty(value)) {
-                return 'El nom d\'usuari no pot estar buit';
-              } else if (value!.length < 3) {
-                return 'El nom d\'usuari ha de tenir més de 3 caràcters';
-              }
-              return null;
-            },
+            onChanged: registerCubit.updateUsername,
+            errorMessage: username.errorMessage,
           ),
           const SizedBox(height: 10),
+
+          // Email
           CustomTextFormField(
             label: 'Correu electrònic',
-            onChanged: (value) {
-              registerCubit.updateEmail(value);
-              _formKey.currentState?.validate();
-            },
-            validator: (value) {
-              if (isNullOrEmpty(value)) {
-                return 'El correu electrònic no pot estar buit';
-              } else if (!isEmailValid(value)) {
-                return 'El correu electrònic no és vàlid';
-              }
-              return null;
-            },
+            onChanged: registerCubit.updateEmail,
+            errorMessage: email.errorMessage,
           ),
           const SizedBox(height: 10),
+
+          // Password
           CustomTextFormField(
             label: 'Password',
             obscureText: true,
-            onChanged: (value) {
-              registerCubit.updatePassword(value);
-              _formKey.currentState?.validate();
-            },
-            validator: (value) {
-              if (isNullOrEmpty(value)) {
-                return 'La contrasenya no pot estar buida';
-              } else if (value!.length < 6) {
-                return 'La contrasenya ha de tenir com a mínim 6 caràcters';
-              }
-              return null;
-            },
+            onChanged: registerCubit.updatePassword,
+            errorMessage: password.errorMessage,
           ),
           const SizedBox(height: 20),
+
+          // Confirm Password
           FilledButton.tonalIcon(
             onPressed: () {
-              final isValid = _formKey.currentState?.validate();
-              if (!isValid!) return;
               registerCubit.onSubmit();
             },
             icon: const Icon(Icons.save),
