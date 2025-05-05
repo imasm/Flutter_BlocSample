@@ -23,6 +23,16 @@ class HomeScreen extends StatelessWidget {
             subtitle: const Text("Gestor d'estats simple"),
             onTap: () => {context.push('/bloc')},
           ),
+
+          const Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: Divider()),
+
+          // BLoC
+          ListTile(
+            title: const Text('Nou Usuari'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            subtitle: const Text("Contolador de formularis"),
+            onTap: () => {context.push('/register')},
+          ),
         ],
       ),
     );
