@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:forms_app/presentation/blocs/register/cubit/register_cubit.dart';
 import 'package:forms_app/presentation/widgets/widgets.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -26,7 +28,8 @@ class _RegisterView extends StatelessWidget {
             children: [
               FlutterLogo(size: 100),
               const SizedBox(height: 20),
-              _RegisterForm(),
+              BlocProvider(create: (context) => RegisterCubit(), child: const _RegisterForm()),
+
               const SizedBox(height: 20),
             ],
           ),
@@ -60,13 +63,17 @@ class _RegisterFormState extends State<_RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
+    final RegisterCubit registerCubit = context.watch<RegisterCubit>();
     return Form(
       key: _formKey,
       child: Column(
         children: [
           CustomTextFormField(
             label: 'Username',
-            onChanged: (value) => username = value,
+            onChanged: (value) {
+              registerCubit.updateUsername(value);
+              _formKey.currentState?.validate();
+            },
             validator: (value) {
               if (isNullOrEmpty(value)) {
                 return 'El nom d\'usuari no pot estar buit';
@@ -79,7 +86,10 @@ class _RegisterFormState extends State<_RegisterForm> {
           const SizedBox(height: 10),
           CustomTextFormField(
             label: 'Correu electrònic',
-            onChanged: (value) => email = value,
+            onChanged: (value) {
+              registerCubit.updateEmail(value);
+              _formKey.currentState?.validate();
+            },
             validator: (value) {
               if (isNullOrEmpty(value)) {
                 return 'El correu electrònic no pot estar buit';
@@ -93,7 +103,10 @@ class _RegisterFormState extends State<_RegisterForm> {
           CustomTextFormField(
             label: 'Password',
             obscureText: true,
-            onChanged: (value) => password = value,
+            onChanged: (value) {
+              registerCubit.updatePassword(value);
+              _formKey.currentState?.validate();
+            },
             validator: (value) {
               if (isNullOrEmpty(value)) {
                 return 'La contrasenya no pot estar buida';
@@ -108,7 +121,7 @@ class _RegisterFormState extends State<_RegisterForm> {
             onPressed: () {
               final isValid = _formKey.currentState?.validate();
               if (!isValid!) return;
-              print('Username: $username, Email: $email, Password: $password');
+              registerCubit.onSubmit();
             },
             icon: const Icon(Icons.save),
             label: Text('Nuevo usuari'),
